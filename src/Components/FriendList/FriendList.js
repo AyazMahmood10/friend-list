@@ -8,6 +8,9 @@ const FriendList = () => {
     const [page, setPage] = useState(0);
     const [hasNext, setHasNext] = useState(0);
     const [hasPrev, setHasPrev] = useState(false);
+    const [searchValue, setSearchValue] = useState("");
+    const [holdList, setHoldList] = useState([]);
+
 
 
 
@@ -78,7 +81,7 @@ const FriendList = () => {
                 arr[i].isFavorite = !arr[i].isFavorite;
             }
         }
-        console.log("toggle",arr)
+        console.log("toggle", arr)
         setList(arr);
         console.log("favoriteToggle")
     }
@@ -93,21 +96,52 @@ const FriendList = () => {
     }
 
     const sortByFavourites = () => {
-        let pointer=0;
-        let arr=[...list];
-        while(pointer<arr.length-1){
-            for(let i=pointer+1; i<list.length;i++){
-                console.log("pointer",pointer)
-                if(list[i].isFavorite===true){
+        let pointer = 0;
+        let arr = [...list];
+        while (pointer < arr.length - 1) {
+            for (let i = pointer + 1; i < list.length; i++) {
+                console.log("pointer", pointer)
+                if (list[i].isFavorite === true) {
                     let temp = arr[i];
                     arr[i] = arr[pointer];
                     arr[pointer] = temp;
                     break;
                 }
             }
-            pointer++;       
+            pointer++;
         }
         setList(arr);
+    }
+
+    const searchList = (e) => {
+        if(e.key!=="Enter"){
+            return;
+        }
+        let tempList = [...list];
+        let arr= tempList.filter((item)=>
+          item.name.toLowerCase()===searchValue.toLowerCase()
+        )
+        setList(arr);
+        setHoldList(tempList);
+        setSearchValue('');
+    }
+
+
+    const handleOnChangeSearch = (e) => {
+        if (!e.target.value.replace(/\s/g, "").length) {
+            setSearchValue("");
+        } else {
+            setSearchValue(e.target.value); //Using event value to change the text in the form accordingly
+        }
+    }
+
+
+    const clearSearch = () => {
+        if(holdList.length>0){
+            setList(holdList);
+            setHoldList([]);
+        }
+
     }
 
 
@@ -131,7 +165,7 @@ const FriendList = () => {
                     />
                 )
             })
-        )    
+        )
     }
 
     return (
@@ -150,14 +184,16 @@ const FriendList = () => {
                         <input
                             type="text"
                             placeholder="Enter a name to search"
-                            
-
+                            onKeyPress={searchList}
+                            onChange={handleOnChangeSearch}
+                            value={searchValue}
                         />
-                        <button onClick = {sortByFavourites}> Sort by favourites</button>
+                        <button onClick={clearSearch}> Clear</button>
+                        <button onClick={sortByFavourites}> Sort by favourites</button>
                     </div>
                 }
                 {
-                    list.length>0 &&
+                    list.length > 0 &&
                     renderFriendList()
                 }
                 {list.length === 0 &&
