@@ -12,11 +12,12 @@ const FriendList = () => {
 
 
     useEffect(() => {
-        let maxPage; 
-        if(list.length>0 && list.length%4===0){
-            maxPage = Math.floor(list.length/4)-1;
-        }else if(list.length%4!==0 && list.length>0){
-            maxPage = Math.floor(list.length/4);
+
+        let maxPage;
+        if (list.length > 0 && list.length % 4 === 0) {
+            maxPage = Math.floor(list.length / 4) - 1;
+        } else if (list.length % 4 !== 0 && list.length > 0) {
+            maxPage = Math.floor(list.length / 4);
         }
 
         if (page < maxPage) {
@@ -30,6 +31,7 @@ const FriendList = () => {
         } else {
             setHasPrev(false)
         }
+
     }, [page, list.length])
 
 
@@ -70,13 +72,13 @@ const FriendList = () => {
     }
 
     const toggleFavorites = (item) => {
-        let arr = [];
+        let arr = [...list];
         for (let i = 0; i < list.length; i++) {
             if (item.key === list[i].key) {
-                list[i].isFavorite = !list[i].isFavorite;
+                arr[i].isFavorite = !arr[i].isFavorite;
             }
-            arr.push(list[i]);
         }
+        console.log("toggle",arr)
         setList(arr);
         console.log("favoriteToggle")
     }
@@ -85,8 +87,27 @@ const FriendList = () => {
         let arr = list.filter((element) => (
             item.key !== element.key
         ))
+        alert("Delete entry from the friend list?")
         setList(arr);
         console.log("deleteFriend")
+    }
+
+    const sortByFavourites = () => {
+        let pointer=0;
+        let arr=[...list];
+        while(pointer<arr.length-1){
+            for(let i=pointer+1; i<list.length;i++){
+                console.log("pointer",pointer)
+                if(list[i].isFavorite===true){
+                    let temp = arr[i];
+                    arr[i] = arr[pointer];
+                    arr[pointer] = temp;
+                    break;
+                }
+            }
+            pointer++;       
+        }
+        setList(arr);
     }
 
 
@@ -109,7 +130,8 @@ const FriendList = () => {
                         deleteFriend={() => deleteFriend(item)}
                     />
                 )
-            }))
+            })
+        )    
     }
 
     return (
@@ -124,6 +146,18 @@ const FriendList = () => {
             />
             <div>
                 {list.length > 0 &&
+                    <div>
+                        <input
+                            type="text"
+                            placeholder="Enter a name to search"
+                            
+
+                        />
+                        <button onClick = {sortByFavourites}> Sort by favourites</button>
+                    </div>
+                }
+                {
+                    list.length>0 &&
                     renderFriendList()
                 }
                 {list.length === 0 &&
@@ -133,11 +167,11 @@ const FriendList = () => {
                 }
                 {
                     hasPrev &&
-                    <span onClick={handlePrev}> prev </span>
+                    <span onClick={handlePrev}> Prev </span>
                 }
                 {
                     hasNext &&
-                    <span onClick={handleNext}> next </span>
+                    <span onClick={handleNext}> Next </span>
                 }
 
             </div>

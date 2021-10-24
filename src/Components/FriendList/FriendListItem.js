@@ -1,4 +1,5 @@
 import React from 'react';
+import './FriendListItem.css'
 
 const FriendListItem = (props) => {
 
@@ -10,7 +11,9 @@ const FriendListItem = (props) => {
                     <span> is your friend </span>
                 </div>
                 <div>
-                    <button className="favoriteButton" onClick={props.toggleFavorites}> Favorites </button>
+                    <button 
+                        className={props.item.isFavorite ? "favoriteActive" : "favoriteInActive"} 
+                        onClick={props.toggleFavorites}> Favorites </button>
                 </div>
                 <div>
                     <button className="deleteButton" onClick={props.deleteFriend}> Delete </button>
